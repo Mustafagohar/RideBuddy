@@ -6,7 +6,7 @@ This repository contains the code for a Full stack car rental website with 3 mod
 
 ## Installation
 
-Clone Rent a Ride
+Clone RideBuddy
 
 ```bash
 https://github.com/jeevan-aj/Rent-a-Ride.git
