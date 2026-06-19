@@ -31,16 +31,11 @@ App.listen(port, () => {
   console.log("server listening !");
 });
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://ridebuddy-9sqz4gqa0-mustafagohars-projects.vercel.app'
-]; // Add allowed origins here
-
 App.use(
   cors({
-    origin: allowedOrigins,
-    methods:['GET', 'PUT', 'POST' ,'PATCH','DELETE'],
-    credentials: true, // Enables the Access-Control-Allow-Credentials header
+    origin: true,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })
 );
 
