@@ -8,20 +8,37 @@ const expireDate = new Date(Date.now() + 3600000);
 export const signUp = async (req, res, next) => {
   const { username, email, password } = req.body;
 
-  // i put hashedPassword and newUser in try because if emty value comes the exicution dosenot stop
-
   try {
+    console.log("========== SIGNUP REQUEST ==========");
+    console.log(req.body);
+
     const hashedPassword = bcryptjs.hashSync(password, 10);
+
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
       isUser: true,
     });
+
     await newUser.save();
-    res.status(200).json({ message: "newUser added successfully" });
+
+    console.log("User created successfully");
+
+    return res.status(200).json({
+      success: true,
+      message: "New user added successfully",
+    });
   } catch (error) {
-    next(error);
+    console.log("====================================");
+    console.log("SIGNUP ERROR");
+    console.log(error);
+    console.log("====================================");
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
