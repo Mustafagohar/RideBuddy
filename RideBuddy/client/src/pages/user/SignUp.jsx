@@ -6,16 +6,19 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-//zod validation schema
 const schema = z.object({
-  username: z.string().min(3, { message: "minimum 3 characters required" }),
+  username: z.string().min(3, {
+    message: "minimum 3 characters required",
+  }),
   email: z
     .string()
     .min(1, { message: "email required" })
     .refine((value) => /\S+@\S+\.\S+/.test(value), {
       message: "Invalid email address",
     }),
-  password: z.string().min(4, { message: "minimum 4 characters required" }),
+  password: z.string().min(4, {
+    message: "minimum 4 characters required",
+  }),
 });
 
 function SignUp() {
@@ -23,30 +26,52 @@ function SignUp() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(schema) });
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
 
   const [isError, setError] = useState(false);
   const [isLoading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const onSubmit = async (formData, e) => {
     e.preventDefault();
+
+    const BASE_URL = "https://ridebuddy-18zk.onrender.com";
+
     setLoading(true);
+
     try {
-      const res = await fetch("/api/auth/signup", {
+      console.log("Sending Signup Request...");
+      console.log(formData);
+
+      const res = await fetch(`${BASE_URL}/api/auth/signup`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(formData),
       });
+
       const data = await res.json();
+
+      console.log("Response Status:", res.status);
+      console.log("Response Data:", data);
+
       setLoading(false);
-      if (data.succes === false) {
+
+      if (!res.ok || data.success === false) {
         setError(true);
         return;
       }
+
       setError(false);
       navigate("/signin");
     } catch (error) {
+      console.log("SIGNUP ERROR");
+      console.log(error);
+
       setLoading(false);
       setError(true);
     }
@@ -54,15 +79,14 @@ function SignUp() {
 
   return (
     <>
-      <div
-        className={`pb-10 max-w-lg mx-auto mt-16  rounded-lg overflow-hidden  shadow-2xl`}
-      >
-        <div
-          className={` green px-6 py-2   rounded-t-lg flex justify-between items-center`}
-        >
-          <h1 className={`${styles.heading2} text-[28px]`}>Sign Up</h1>
+      <div className="pb-10 max-w-lg mx-auto mt-16 rounded-lg overflow-hidden shadow-2xl">
+        <div className="green px-6 py-2 rounded-t-lg flex justify-between items-center">
+          <h1 className={`${styles.heading2} text-[28px]`}>
+            Sign Up
+          </h1>
+
           <Link to={"/"}>
-            <div className=" px-3  font-bold  hover:bg-green-300 rounded-md  shadow-inner">
+            <div className="px-3 font-bold hover:bg-green-300 rounded-md shadow-inner">
               x
             </div>
           </Link>
@@ -75,14 +99,13 @@ function SignUp() {
           <div>
             <input
               type="text"
-              id="username"
               className="text-black bg-slate-100 p-3 rounded-md w-full"
-              placeholder="UserName"
+              placeholder="Username"
               {...register("username")}
             />
+
             {errors.username && (
               <p className="text-red-500 text-[8px] pt-1">
-                {" "}
                 {errors.username.message}
               </p>
             )}
@@ -90,8 +113,7 @@ function SignUp() {
 
           <div>
             <input
-              type="text"
-              id="email"
+              type="email"
               className="text-black bg-slate-100 p-3 rounded-md w-full"
               placeholder="Email"
               {...register("email")}
@@ -106,12 +128,12 @@ function SignUp() {
 
           <div>
             <input
-              type="text"
-              id="password"
+              type="password"
               className="text-black bg-slate-100 p-3 rounded-md w-full"
               placeholder="Password"
-              {...register("password", { required: true, minLength: 6 })}
+              {...register("password")}
             />
+
             {errors.password && (
               <p className="text-red-500 text-[8px] pt-1">
                 {errors.password.message}
@@ -120,34 +142,39 @@ function SignUp() {
           </div>
 
           <button
-            className={`${styles.button}  disabled:bg-slate-500 text-black disabled:text-white`}
+            className={`${styles.button} disabled:bg-slate-500 text-black disabled:text-white`}
             disabled={isLoading}
           >
-            {isLoading ? "Loading ..." : "Register"}
+            {isLoading ? "Loading..." : "Register"}
           </button>
+
           <div className="flex justify-between">
             <p className="text-[10px]">
-              Have a account?{" "}
+              Have an account?{" "}
               <span className="text-blue-600">
-                {" "}
-                <Link to={`/signin`}>Sign in</Link>
+                <Link to="/signin">Sign In</Link>
               </span>
             </p>
+
             <p className="text-[10px] text-red-600">
-              {isError && "something went wrong"}
+              {isError && "Something went wrong"}
             </p>
           </div>
         </form>
+
         <div>
           <h3 className="text-center text-slate-700 pt-3 pb-3 text-[10px]">
             OR
           </h3>
+
           <div className="flex justify-center items-center gap-3 pb-6">
             <span className="bg-green-300 w-20 h-[.1px]"></span>
+
             <span className="text-[10px] sm:text-[12px] text-slate-500">
               Continue with social login
             </span>
-            <span className="bg-green-300 w-20 h-[.1px]"> </span>
+
+            <span className="bg-green-300 w-20 h-[.1px]"></span>
           </div>
 
           <OAuth />
